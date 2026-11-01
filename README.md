@@ -1,22 +1,92 @@
-# 📎 BlueClip — Next-Generation macOS Clipboard Manager with Private Cloud Sync
+<p align="center">
+  <img src="Resources/AppIcon.png" width="120" alt="BlueClip Logo" />
+</p>
 
-**BlueClip** is a native macOS menu bar application designed and built from the ground up as a modern successor to FIPLAB's **CopyClip**. It retains all the beloved lightweight clipboard caching features of CopyClip, modernizes the interface with a custom **vibrant Blue Icon** and refined SwiftUI design, and introduces a powerful **Private Cloud Network Sync** engine that syncs your copy-paste history to your personal server infrastructure with colloquial shareword authentication.
+<h1 align="center">BlueClip</h1>
+
+<p align="center">
+  <strong>Native macOS Menu Bar Clipboard Manager with Private Cloud Synchronization & Multi-Mac Unification</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/joehagerman/BlueClip/releases/latest/download/BlueClip-v2.0.0-macOS.zip">
+    <img src="https://img.shields.io/badge/Download-BlueClip_v2.0.0_(ZIP)-blue?style=for-the-badge&logo=apple" alt="Download ZIP">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Version-2.0.0-blue?style=flat-square" alt="Version 2.0.0">
+  <img src="https://img.shields.io/badge/Platform-macOS_13.0+-lightgrey?style=flat-square" alt="Platform: macOS 13.0+">
+  <img src="https://img.shields.io/badge/Architecture-Native_Apple_Silicon_(arm64)-lightgrey?style=flat-square" alt="Architecture: Apple Silicon">
+  <img src="https://img.shields.io/badge/Language-Swift_6-orange?style=flat-square" alt="Language: Swift 6">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License: MIT">
+</p>
+
+---
+
+## Overview
+
+**BlueClip** is a high-performance, native macOS menu bar application (`LSUIElement`) designed as a modern, privacy-first successor to classic clipboard managers like CopyClip. Built with Apple Swift 6 and SwiftUI, BlueClip seamlessly tracks your copy history, categorizes clippings using Apple Foundation Model (AFM) intelligence, and synchronizes your unified clipboard across multiple Macs via an end-to-end private network synchronization hub.
+
+Running quietly in your macOS status bar, BlueClip combines ultra-low memory overhead with instant keyboard hotkeys (`⌘0`–`⌘9`), high-precision auto-paste simulation, security blacklists, and a companion Web Viewer dashboard with multi-layer offline local caching.
+
+---
+
+## Direct Download
+
+| Format | Target Platform | Release Package |
+|:---|:---|:---|
+| **ZIP Archive (.zip)** *(Recommended)* | macOS 13.0 or later (Apple Silicon arm64) | [**Download BlueClip-v2.0.0-macOS.zip**](https://github.com/joehagerman/BlueClip/releases/latest/download/BlueClip-v2.0.0-macOS.zip) |
+
+All official release builds, signatures, and changelogs are available on the [GitHub Releases Page](https://github.com/joehagerman/BlueClip/releases).
 
 ---
 
 ## 🔍 Feature Comparison: CopyClip vs. BlueClip
 
-| Feature Category | Original CopyClip (v1.9.87) | New BlueClip (v2.0) |
+| Feature Category | Original CopyClip (v1.9.87) | Modern BlueClip (v2.0.0) |
 | :--- | :--- | :--- |
-| **Menu Bar Icon** | Black squircle / monochrome paperclip | **Vibrant Royal Blue Icon** (with optional template mode) |
-| **History Navigation** | Numbered hotkeys 1–9, plain text list | **Numbered 1–9 hotkeys**, app source badges, timestamps, search filter |
-| **Auto-Paste Simulation** | ⌘V simulation into active frontmost app | **High-precision CGEvent ⌘V injection** with focus restoration |
-| **Audio Feedback** | System click sound | **Native macOS audio feedback** (`Tink` on copy, `Pop` on select) |
-| **Ignored Apps (Blacklist)** | Exclude selected apps from recording | **Preconfigured security blacklist** (1Password, Bitwarden, Keychain, Passwords) + custom app picker |
+| **Menu Bar Icon** | Monochrome black squircle | **Signature Vibrant Blue Pin** (or adaptive white template) |
+| **Sorting Engine** | Chronological list only | **Dual Mode**: Chronological & **Group by Keywords (AFM)** |
+| **Display Limits** | Fixed display limit | **Configurable Subsettings**: 5, 10, 15, 25, 50, or All clips |
+| **Tag Ordering** | ❌ None | 🏷️ **Most Frequent, Hottest (Recent), or All (A–Z)** |
+| **History Navigation** | Numbered hotkeys 1–9, plain text list | **Numbered ⌘0–⌘9 hotkeys**, app source badges, timestamps, search filter |
+| **Auto-Paste Simulation** | Basic paste simulation | **High-precision CGEvent ⌘V injection** with instant focus restoration |
+| **Audio Feedback** | System click sound | **Native macOS audio feedback** (`Tink` on capture, `Pop` on select) |
+| **Privacy Blacklist** | Exclude selected apps from recording | **Preconfigured security blacklist** (1Password, Bitwarden, Keychain, Passwords) + custom app picker |
 | **Clips Management** | Basic list view | **Split-view Inspector**: raw monospace viewer, word/character/line counts, export to JSON/CSV/TXT |
-| **Pinning Support** | Not supported | **Pin essential clips** to preserve them from auto-deletion |
+| **Pinning Support** | ❌ Not supported | 📌 **Pin essential clips** to preserve them permanently at top |
 | **Cloud Synchronization** | ❌ None (Local only) | 🌐 **Private Network Sync** (custom cloud server or local hub) |
+| **Pairing Model** | ❌ None | 🔐 **Colloquial Sharewords** (e.g. `77 amber tigers`) with SHA-256 tokens |
 | **Cross-Device Web Viewer** | ❌ None | 📱 **Responsive Web History Dashboard** (`web_viewer.html`) with tag grouping |
+| **Offline Cache** | Single file | 📦 **Triple-Store Redundancy** & browser `localStorage` instant cache |
+
+---
+
+## Key Capabilities
+
+### 1. Dual Mode Sorting & AFM Tag Explorer
+- **Chronological Mode**: View your most recent clippings with quick selectors (`5, 10, 15, 25, 50, All`).
+- **Group by Keywords (AFM)**: Automatically sends copied text to Apple Foundation Models to extract top keywords and clusters clippings into interactive accordion groups.
+- **Tag Subsettings**: Order tag clusters by **Most Frequent (📊)**, **Hottest / Recent (🔥)**, or **Alphabetical (🔤)**, with display caps (`Top 5, 10, 15, 25, All Tags`).
+
+### 2. Multi-Mac Unification with Colloquial Sharewords
+- Effortlessly pair multiple Macs without configuring complicated VPNs or databases.
+- Enter your **Email** and a fun, colloquial **Shareword** (e.g. `77 amber tigers` — singular or plural both match).
+- All Macs automatically unify, deduplicate by text, preserve pinned states, and merge clipboard history.
+- Shareword tokens are protected using SHA-256 cryptographic hashing (`?account=...&hash=...`) to prevent token leakage in server logs.
+
+### 3. "All History" Suite & Instant Hotkeys
+- **`⌘0`–`⌘9` Quick Paste**: Instantly select and inject clippings directly into the frontmost app without touching the mouse.
+- **Copy All**: Formats and concatenates all clips with dividers into the clipboard in one click.
+- **Export All**: Export full history into structured JSON or formatted text (`.txt`).
+- **Delete All**: Cleanly purge history with a native confirmation safety sheet.
+
+### 4. Interactive Web Companion with Local Offline Caching
+- Access your clipboard history from any web browser or mobile device via `server/web_viewer.html`.
+- **Instant Local Cache**: Browser `localStorage` hydrates clippings in 0ms — no blank screens or loading spinners.
+- **Offline Indicator**: Automatically detects connectivity drops (`📦 Local Cache (Offline)`) and lets you search, copy, pin, and export offline.
+- **Full Parity**: Supports live search, pin/unpin, delete, quick paste, and tag sorting directly in the web UI.
 
 ---
 
@@ -24,36 +94,44 @@
 
 ```text
 BlueClip/
-├── Package.swift                    # Swift Package Manager manifest
-├── run.sh                           # Build & packaging script (.app bundle)
+├── Package.swift                    # Swift Package Manager manifest (Swift 6)
+├── run.sh                           # Build, clean & packaging script (.app bundle)
 ├── Resources/
 │   ├── AppIcon.icns                 # High-resolution macOS application icon bundle
 │   ├── AppIcon.png                  # 1024x1024 master icon
-│   ├── MenuBarIconBlue.png          # Signature vibrant blue menu bar asset
-│   └── MenuBarIcon.png              # Adaptive monochrome menu bar asset
+│   ├── MenuBarIconBlue.png          # Signature vibrant blue pushpin asset
+│   ├── MenuBarIcon.png              # Adaptive monochrome menu bar asset
+│   ├── generate_icons.swift         # Vector icon generation pipeline
+│   └── generate_pushpin_icons.swift # High-resolution pushpin generator
 ├── Sources/
-│   ├── BlueClipApp.swift            # StatusItem, popover manager & lifecycle
+│   ├── BlueClipApp.swift            # StatusItem, popover manager & app lifecycle
+│   ├── BlueClipApp+Menu.swift       # Dynamic native menu bar builder
+│   ├── BlueClipApp+Actions.swift    # Menu bar actions & export handlers
 │   ├── Models/
 │   │   ├── ClipItem.swift           # Codable clip model with timeAgo & preview
-│   │   ├── AppPreferences.swift     # UserDefaults persistent settings & blacklist
+│   │   ├── AppPreferences.swift     # Persistent settings, SHA-256 tokens & blacklist
 │   │   └── SyncStatus.swift         # Network sync payload & status models
 │   ├── Services/
 │   │   ├── ClipboardMonitorService.swift # NSPasteboard polling & deduplication
-│   │   ├── StorageService.swift     # Local JSON persistence & export engines
+│   │   ├── StorageService.swift     # Triple-store local persistence & fallback cache
 │   │   ├── NetworkSyncService.swift # REST sync engine with SHA-256 token hashing
-│   │   └── AutoPasteService.swift   # CGEvent virtual keycode injection
+│   │   ├── AFMKeywordService.swift  # Apple Foundation Model keyword extraction
+│   │   ├── AutoPasteService.swift   # CGEvent virtual keycode injection
+│   │   └── CopyClipImporterService.swift # One-click migration from legacy CopyClip
 │   └── Views/
 │       ├── MenuBarPopupView.swift   # Dropdown popover with search & quick copy
 │       ├── PreferencesView.swift    # 5-tab macOS settings window
+│       ├── Components/              # Custom squircle icons & clip row views
 │       └── Tabs/
 │           ├── GeneralTabView.swift          # Max clips, snippet limits, sounds
-│           ├── IgnoredAppsTabView.swift      # Blacklist management
-│           ├── ClipsManagementTabView.swift  # Master-detail clip inspector
-│           ├── SyncTabView.swift             # Private network sync configuration
-│           └── AboutTabView.swift            # Branded About view with live stats
+│           ├── IgnoredAppsTabView.swift      # Password manager blacklist
+│           ├── ClipsManagementTabView.swift  # Split-view inspector & export
+│           ├── SyncTabView.swift             # Cloud server & shareword pairing
+│           └── AboutTabView.swift            # Branded About view with Easter Egg
 └── server/
     ├── clipboard_server.py          # Zero-dependency Python standard library server
-    ├── web_viewer.html              # Responsive web viewer with tag grouping
+    ├── web_viewer.html              # Responsive web viewer with AFM tag grouping
+    ├── README_SERVER.md             # Cloud deployment guide
     └── clipboard_history.sample.json # Sample schema payload
 ```
 
@@ -61,30 +139,44 @@ BlueClip/
 
 ## 🚀 Quick Start
 
-### 1. Launching BlueClip
-Execute the launcher script:
+### 1. Building & Launching
+Clone the repository and run the automated build script:
+
 ```bash
+git clone https://github.com/joehagerman/BlueClip.git
+cd BlueClip
 ./run.sh
 ```
-BlueClip will compile, create `build/BlueClip.app`, and place the **Blue Paperclip** icon in your macOS menu bar.
 
-### 2. Copy & Paste Operations
-- Copy text anywhere on your Mac (`⌘C`). BlueClip automatically records the text, source app, and timestamp.
-- Click the **Blue Paperclip** icon in the menu bar.
-- Press **⌘0–⌘9** or click any clip to automatically copy it and paste (`⌘V`) it into your current document.
+BlueClip compiles via Swift Package Manager, applies `dot_clean`, creates `build/BlueClip.app`, starts the background local sync hub on port `8008`, and places the **Blue Pin** icon in your macOS menu bar.
 
-### 3. Preferences & Blacklisting
+### 2. Basic Operations
+- **Copy**: Copy text anywhere on your Mac (`⌘C`). BlueClip records the content, app source, and timestamp.
+- **Paste from History**: Click the menu bar icon and press **⌘0–⌘9** or click any clip to automatically paste (`⌘V`) into your active document.
+- **Search**: Click the menu bar icon and type in the search bar to filter clips by text, app name, or keywords.
+- **Pin**: Click the pin icon next to any clip to permanently preserve it at the top of your list.
+
+### 3. Preferences & Security Blacklist
 - Open **Preferences…** (`⌘,`).
-- Switch to **Ignored Apps** to prevent sensitive credentials from 1Password or Keychain from being saved.
-- Switch to **Sync** to view your server link status or pair other Macs using your Email and Colloquial Shareword.
+- **Ignored Apps**: 1Password, Bitwarden, Apple Passwords, and Keychain Access are blacklisted by default. Add any custom application with one click.
+- **Sync**: Enter your Email and Shareword to merge clipboard history across all your Macs.
 
 ---
 
-## 🌐 Private Network Synchronization
+## 🌐 Private Self-Hosting Guide
 
-BlueClip writes its synced state to:
-1. **Configured Cloud Endpoint**: `POST <your-server-url>/api/clipboard-sync`
-2. **Local Zero-Dependency Hub**: `http://127.0.0.1:8008` (automatically started via `run.sh`)
-3. **Web Viewer Dashboard**: `server/web_viewer.html`
+BlueClip is completely zero-dependency and can be hosted on any private cloud server, VPS, or Raspberry Pi.
 
-To run the web viewer on a remote server or locally, refer to [`server/README_SERVER.md`](server/README_SERVER.md).
+```bash
+# On your server:
+cd /var/www/blueclip
+python3 clipboard_server.py 8008
+```
+
+Open BlueClip Preferences ➔ **Sync**, set your server URL (`https://your-server.com`), and your clipboard will automatically unify in real time.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
