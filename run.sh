@@ -72,7 +72,8 @@ cat <<EOF > "$CONTENTS_DIR/Info.plist"
 </plist>
 EOF
 
-# Strip extended attributes and ad-hoc sign bundle
+# Strip extended attributes and dot-underscore resource forks
+dot_clean -m "$BUNDLE_DIR" 2>/dev/null || true
 xattr -cr "$BUNDLE_DIR" 2>/dev/null || true
 codesign -s - --force --deep "$BUNDLE_DIR" 2>/dev/null || true
 
