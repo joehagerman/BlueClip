@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueClip • Cloud History & Tag Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0b0f19;
+            --bg-card: #131b2e;
+            --bg-card-hover: #1c2742;
+            --bg-card-elevated: #1e2942;
+            --border-card: #202e4d;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #2563eb;
+            --accent-blue-glow: rgba(37, 99, 235, 0.4);
+            --accent-cyan: #06b6d4;
+            --code-bg: #090d16;
+            --share-bg: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
+            --share-border: rgba(59, 130, 246, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-card);
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-box {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px var(--accent-blue-glow);
+            font-size: 26px;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .header-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .server-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cache-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cache-pill.offline {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.35);
+            color: #fbbf24;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .pulse-dot.offline {
+            background: #f59e0b;
+            box-shadow: 0 0 8px #f59e0b;
+        }
+
+        /* ── Share Info Card ── */
+        .share-card {
+            background: var(--share-bg);
+            border: 1px solid var(--share-border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .share-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .share-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #93c5fd;
+        }
+
+        .share-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            background: rgba(11, 15, 25, 0.6);
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .share-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .share-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .share-val-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .share-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            word-break: break-all;
+        }
+
+        .share-badge {
+            background: rgba(37, 99, 235, 0.25);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+            color: #93c5fd;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .share-badge-hash {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #6ee7b7;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .share-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .share-hint code {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #60a5fa;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .stat-card .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-card .value {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+        }
+
+        /* ── All History Actions Bar ── */
+        .all-history-bar {
+            background: rgba(30, 41, 66, 0.7);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* ── Quick Add / Paste Card ── */
+        .quick-add-card {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 18px var(--accent-blue-glow);
+        }
+
+        .quick-add-card textarea {
+            width: 100%;
+            background: rgba(11, 15, 25, 0.85);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            resize: vertical;
+        }
+
+        .quick-add-card textarea:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        /* ── Menubar-Matching View & Sort Controls ── */
+        .toolbar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toolbar-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-group {
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-group .btn-mode {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-group .btn-mode.active {
+            background: var(--accent-blue);
+            color: #ffffff;
+            box-shadow: 0 2px 8px var(--accent-blue-glow);
+        }
+
+        .subsettings-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .subsetting-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .select-input {
+            background: rgba(11, 15, 25, 0.8);
+            border: 1px solid var(--border-card);
+            color: var(--text-primary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .select-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: rgba(11, 15, 25, 0.8);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 8px 12px 8px 34px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-card);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-danger {
+            background: rgba(220, 38, 38, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            color: #ffffff;
+            border-color: #dc2626;
+        }
+
+        .btn-pinned {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.45);
+            color: #fbbf24;
+        }
+
+        .btn-pinned:hover {
+            background: rgba(245, 158, 11, 0.35);
+        }
+
+        /* ── Tag Groups & Clips List ── */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tag-group-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .tag-group-card:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .tag-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+        }
+
+        .tag-group-card.open .tag-group-header {
+            border-bottom: 1px solid var(--border-card);
+            background: rgba(37, 99, 235, 0.06);
+        }
+
+        .tag-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tag-icon-badge {
+            font-size: 16px;
+        }
+
+        .tag-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .tag-count-badge {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            color: #93c5fd;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .tag-toggle-chevron {
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: transform 0.2s;
+        }
+
+        .tag-group-card.open .tag-toggle-chevron {
+            transform: rotate(180deg);
+        }
+
+        .tag-group-body {
+            display: none;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tag-group-card:not(.open) .tag-group-body {
+            display: none;
+        }
+
+        /* ── Clip Card ── */
+        .clip-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .clip-card.pinned {
+            border-color: rgba(245, 158, 11, 0.45);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.04) 0%, rgba(19, 27, 46, 1) 100%);
+        }
+
+        .clip-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .clip-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .app-badge {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .pinned-tag {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fbbf24;
+            padding: 1px 7px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .keyword-badge {
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            color: #93c5fd;
+            padding: 1px 7px;
+            border-radius: 10px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .keyword-badge:hover {
+            background: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        .clip-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #e2e8f0;
+            background: var(--code-bg);
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .clip-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* ── Modal Confirmation ── */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 14px;
+            padding: 24px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #f87171;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s;
+            pointer-events: none;
+            z-index: 1100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <div class="logo-box">📌</div>
+                <div class="brand-text">
+                    <h1>BlueClip Cloud History</h1>
+                    <p>Private Synchronization & Tag Explorer</p>
+                </div>
+            </div>
+            <div class="header-badges">
+                <div class="cache-pill" id="cacheIndicator">
+                    <span>📦 Cache: Loaded</span>
+                </div>
+                <div class="server-pill">
+                    <div class="pulse-dot" id="serverPulse"></div>
+                    <span id="serverLabel">Hub: Connecting…</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Share Information Card with Hashed Token Security -->
+        <div class="share-card" id="shareCard">
+            <div class="share-header">
+                <div class="share-title">
+                    <span>🔐 Active Multi-Mac Pairing & Share Info</span>
+                </div>
+                <button class="btn btn-sm btn-primary" onclick="copyShareDetails()">📋 Copy Pairing Details</button>
+            </div>
+            <div class="share-fields">
+                <div class="share-field">
+                    <span class="share-label">Linked Account / Email</span>
+                    <div class="share-val-row">
+                        <span class="share-val" id="shareEmail">--</span>
+                        <button class="btn btn-sm" onclick="copyText(currentEmail, 'Email copied!')">Copy</button>
+                    </div>
+                </div>
+                <div class="share-field">
+                    <span class="share-label">Shareword Token Security</span>
+                    <div class="share-val-row">
+                        <span class="share-val" id="shareToken">--</span>
+                        <button class="btn btn-sm" onclick="copyText(currentShareword || currentHash, 'Token copied!')">Copy</button>
+                    </div>
+                </div>
+            </div>
+            <p class="share-hint">
+                💡 <strong>Multi-Mac Unification:</strong> Open <code>BlueClip Preferences ➔ Sync</code> on your other Mac, and enter this <strong>Email</strong> and <strong>Shareword</strong>. Both computers will automatically merge clipboard history.
+            </p>
+        </div>
+
+        <!-- Telemetry Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="label">Total Clippings</div>
+                <div class="value" id="statTotalClips">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Last Synced / Cached</div>
+                <div class="value" id="statLastSynced">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Sync Device</div>
+                <div class="value" id="statDevice">--</div>
+            </div>
+        </div>
+
+        <!-- All History Operations (Matching Menubar "All History" Submenu) -->
+        <div class="all-history-bar">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span style="font-size:12px; font-weight:600; color:#94a3b8;">📋 All History:</span>
+                <button class="btn btn-sm" onclick="copyAllHistory()">📋 Copy All</button>
+                <button class="btn btn-sm" onclick="exportJSON()">📥 Export JSON</button>
+                <button class="btn btn-sm" onclick="exportText()">📄 Export Text</button>
+                <button class="btn btn-sm btn-danger" onclick="openDeleteAllModal()">🗑️ Delete All…</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn btn-sm btn-primary" onclick="toggleQuickAdd()">➕ Quick Clip</button>
+            </div>
+        </div>
+
+        <!-- Quick Add / Paste Card -->
+        <div class="quick-add-card" id="quickAddCard" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; font-weight:600; color:#93c5fd;">➕ Quick Add Clip / Paste Text</span>
+                <button class="btn btn-sm" onclick="toggleQuickAdd()">✕ Close</button>
+            </div>
+            <textarea id="quickAddInput" placeholder="Paste or type text to add into unified clipboard history…" rows="3"></textarea>
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button class="btn btn-sm btn-primary" onclick="submitQuickAdd()">📎 Save to Clipboard</button>
+            </div>
+        </div>
+
+        <!-- Menubar-Matching View & Tag Controls -->
+        <div class="toolbar">
+            <div class="toolbar-top">
+                <div class="btn-group">
+                    <button class="btn-mode active" id="btnChrono" onclick="setSortMode('chrono')">
+                        <span>⏱️ Chronological</span>
+                    </button>
+                    <button class="btn-mode" id="btnKeyword" onclick="setSortMode('keyword')">
+                        <span>🏷️ Group by Tags (AFM)</span>
+                    </button>
+                </div>
+
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search clips or keywords in real-time…">
+                </div>
+
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-sm" onclick="loadHistory()">🔄 Sync Now</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Subsettings (Matching Menubar App) -->
+            <div class="subsettings-row" id="chronoSubsettings">
+                <div class="subsetting-item">
+                    <span>Show Recent:</span>
+                    <select class="select-input" id="chronoLimitSelect" onchange="updateChronoLimit(this.value)">
+                        <option value="5">5 clips</option>
+                        <option value="10">10 clips</option>
+                        <option value="15" selected>15 clips</option>
+                        <option value="25">25 clips</option>
+                        <option value="50">50 clips</option>
+                        <option value="0">All clips</option>
+                    </select>
+                </div>
+                <span style="font-size:11px; color:#64748b;">(Ordered chronologically with pinned clips prioritized)</span>
+            </div>
+
+            <div class="subsettings-row" id="keywordSubsettings" style="display:none;">
+                <div class="subsetting-item">
+                    <span>Tag Ordering:</span>
+                    <select class="select-input" id="tagSortSelect" onchange="updateTagSort(this.value)">
+                        <option value="mostFrequent" selected>📊 Most Frequent</option>
+                        <option value="hottest">🔥 Hottest (Recent)</option>
+                        <option value="all">🔤 All (A–Z)</option>
+                    </select>
+                </div>
+                <div class="subsetting-item">
+                    <span>Show Tags:</span>
+                    <select class="select-input" id="tagLimitSelect" onchange="updateTagLimit(this.value)">
+                        <option value="5">Top 5</option>
+                        <option value="10" selected>Top 10</option>
+                        <option value="15">Top 15</option>
+                        <option value="25">Top 25</option>
+                        <option value="0">All Tags</option>
+                    </select>
+                </div>
+                <span style="font-size:11px; color:#64748b;">(Grouped by Apple Foundation Model keywords)</span>
+            </div>
+        </div>
+
+        <!-- Render Target Area -->
+        <div class="content-area" id="clipsContainer">
+            <!-- Dynamic clips or tag groups rendered here -->
+        </div>
+    </div>
+
+    <!-- Confirmation Modal for Delete All -->
+    <div class="modal-overlay" id="deleteAllModal">
+        <div class="modal-card">
+            <h3>🗑️ Delete All Clipboard History?</h3>
+            <p>Are you sure you want to delete all clipboard history? This will permanently clear clippings from the cloud server and local browser cache. This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn" onclick="closeDeleteAllModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDeleteAll()">Yes, Delete All History</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+        let allClips = [];
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentEmail = urlParams.get('account') || urlParams.get('email') || urlParams.get('user') || "";
+        let currentHash = urlParams.get('hash') || urlParams.get('token_hash') || "";
+        let currentShareword = urlParams.get('token') || urlParams.get('shareword') || "";
+
+        // UI State (Matches Menubar Preferences)
+        let currentSortMode = "chrono"; // "chrono" or "keyword"
+        let chronoDisplayLimit = 15;
+        let tagSortMode = "mostFrequent"; // "mostFrequent", "hottest", "all"
+        let tagDisplayLimit = 10;
+        let searchQuery = "";
+
+        // ── Local Storage Caching System ──
+        const CACHE_PREFIX = "blueclip_cache_";
+        function getCacheKey() {
+            return CACHE_PREFIX + (currentEmail ? currentEmail.toLowerCase() : "default");
+        }
+
+        function saveLocalCache() {
+            try {
+                const payload = {
+                    clips: allClips,
+                    email: currentEmail,
+                    shareword: currentShareword,
+                    hash: currentHash,
+                    timestamp: new Date().toISOString(),
+                    device: document.getElementById('statDevice').innerText || "Mac"
+                };
+                localStorage.setItem(getCacheKey(), JSON.stringify(payload));
+                localStorage.setItem(CACHE_PREFIX + "latest", JSON.stringify(payload));
+                updateCacheStatus(true, false);
+            } catch (err) {
+                console.warn("Could not save to localStorage cache:", err);
+            }
+        }
+
+        function loadFromLocalCache() {
+            try {
+                let raw = localStorage.getItem(getCacheKey());
+                if (!raw) {
+                    raw = localStorage.getItem(CACHE_PREFIX + "latest");
+                }
+                if (!raw) return false;
+                const cached = JSON.parse(raw);
+                if (cached && Array.isArray(cached.clips) && cached.clips.length > 0) {
+                    allClips = cached.clips;
+                    if (!currentEmail && cached.email) currentEmail = cached.email;
+                    if (!currentShareword && cached.shareword) currentShareword = cached.shareword;
+                    if (!currentHash && cached.hash) currentHash = cached.hash;
+                    if (cached.device) document.getElementById('statDevice').innerText = cached.device;
+
+                    document.getElementById('statTotalClips').innerText = allClips.length;
+                    if (cached.timestamp) {
+                        const d = new Date(cached.timestamp);
+                        document.getElementById('statLastSynced').innerText = (isNaN(d) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })) + " (Cache)";
+                    }
+                    updateShareCard();
+                    updateCacheStatus(true, true);
+                    renderCurrentView();
+                    return true;
+                }
+            } catch (err) {
+                console.warn("Could not load from localStorage cache:", err);
+            }
+            return false;
+        }
+
+        function updateCacheStatus(hasCache, isOffline) {
+            const el = document.getElementById('cacheIndicator');
+            const pulse = document.getElementById('serverPulse');
+            if (isOffline) {
+                el.className = "cache-pill offline";
+                el.innerText = "📦 Local Cache Active (Offline)";
+                pulse.className = "pulse-dot offline";
+            } else {
+                el.className = "cache-pill";
+                el.innerText = "📦 Local Cache Synced";
+                pulse.className = "pulse-dot";
+            }
+        }
+
+        function updateShareCard() {
+            document.getElementById('shareEmail').innerText = currentEmail || 'Not configured';
+            const tokenEl = document.getElementById('shareToken');
+            if (currentHash) {
+                tokenEl.innerHTML = `<span class="share-badge-hash">🔒 Verified Hash</span> <span style="color:#94a3b8; font-size:11px;">(${currentHash.substring(0, 10)}…)</span>`;
+            } else if (currentShareword) {
+                tokenEl.innerHTML = `<span class="share-badge">${escapeHtml(currentShareword)}</span>`;
+            } else {
+                tokenEl.innerText = 'Active Hub Protection';
+            }
+        }
+
+        // ── Remote Hub Sync ──
+        async function loadHistory() {
+            try {
+                let fetchUrl = 'clipboard_history.json?t=' + Date.now();
+                if (window.location.protocol.startsWith('http')) {
+                    fetchUrl = '/api/clipboard-sync';
+                    const qs = [];
+                    if (currentEmail) qs.push('account=' + encodeURIComponent(currentEmail));
+                    if (currentHash) qs.push('hash=' + encodeURIComponent(currentHash));
+                    if (currentShareword) qs.push('token=' + encodeURIComponent(currentShareword));
+                    qs.push('t=' + Date.now());
+                    fetchUrl += '?' + qs.join('&');
+                }
+
+                const res = await fetch(fetchUrl);
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                const data = await res.json();
+                
+                if (data && !Array.isArray(data)) {
+                    allClips = data.clips || [];
+                    if (data.email) currentEmail = data.email;
+                    if (data.shareword) currentShareword = data.shareword;
+                    if (data.shareword_hash && !currentHash) currentHash = data.shareword_hash;
+                    if (data.device) document.getElementById('statDevice').innerText = data.device;
+                    if (data.timestamp) {
+                        const d = new Date(data.timestamp);
+                        document.getElementById('statLastSynced').innerText = isNaN(d) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    }
+                } else if (Array.isArray(data)) {
+                    allClips = data;
+                }
+                
+                updateShareCard();
+                document.getElementById('statTotalClips').innerText = allClips.length;
+                if (!document.getElementById('statLastSynced').innerText || document.getElementById('statLastSynced').innerText === '--') {
+                    document.getElementById('statLastSynced').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                }
+                
+                const host = window.location.host;
+                document.getElementById('serverLabel').innerText = host ? `Hub: ${host} (🟢 Synced)` : 'Hub: Local Sync (🟢)';
+                updateCacheStatus(true, false);
+
+                // Save fresh data into browser local cache
+                saveLocalCache();
+
+                renderCurrentView();
+            } catch (err) {
+                console.warn("Could not sync with remote hub, using local cache:", err);
+                const loaded = loadFromLocalCache();
+                const host = window.location.host;
+                document.getElementById('serverLabel').innerText = host ? `Hub: ${host} (Offline)` : 'Hub: Offline';
+                updateCacheStatus(loaded, true);
+                renderCurrentView();
+            }
+        }
+
+        // View Mode Switching
+        window.setSortMode = function(mode) {
+            currentSortMode = mode;
+            document.getElementById('btnChrono').classList.toggle('active', mode === 'chrono');
+            document.getElementById('btnKeyword').classList.toggle('active', mode === 'keyword');
+            document.getElementById('chronoSubsettings').style.display = (mode === 'chrono') ? 'flex' : 'none';
+            document.getElementById('keywordSubsettings').style.display = (mode === 'keyword') ? 'flex' : 'none';
+            renderCurrentView();
+        };
+
+        window.updateChronoLimit = function(val) {
+            chronoDisplayLimit = parseInt(val, 10);
+            renderCurrentView();
+        };
+
+        window.updateTagSort = function(val) {
+            tagSortMode = val;
+            renderCurrentView();
+        };
+
+        window.updateTagLimit = function(val) {
+            tagDisplayLimit = parseInt(val, 10);
+            renderCurrentView();
+        };
+
+        function getFilteredClips() {
+            if (!searchQuery) return allClips;
+            const q = searchQuery.toLowerCase();
+            return allClips.filter(c => {
+                const textMatch = (c.text || '').toLowerCase().includes(q);
+                const appMatch = (c.appName || '').toLowerCase().includes(q);
+                const kwMatch = (c.keywords || []).some(k => k.toLowerCase().includes(q));
+                return textMatch || appMatch || kwMatch;
+            });
+        }
+
+        function renderCurrentView() {
+            const container = document.getElementById('clipsContainer');
+            container.innerHTML = '';
+
+            const filtered = getFilteredClips();
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding: 48px; color: var(--text-secondary); background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-card);">No clippings recorded or matching current view.</div>';
+                return;
+            }
+
+            if (currentSortMode === 'chrono') {
+                renderChronologicalView(container, filtered);
+            } else {
+                renderTagGroupedView(container, filtered);
+            }
+        }
+
+        function renderChronologicalView(container, clips) {
+            // Sort: Pinned first, then newest timestamp
+            const sorted = [...clips].sort((a, b) => {
+                if (!!a.isPinned !== !!b.isPinned) return a.isPinned ? -1 : 1;
+                return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+            });
+            const visible = (chronoDisplayLimit > 0) ? sorted.slice(0, chronoDisplayLimit) : sorted;
+            visible.forEach((clip, index) => {
+                container.appendChild(createClipCard(clip, index + 1));
+            });
+        }
+
+        function renderTagGroupedView(container, clips) {
+            // Group clips by AFM keywords
+            const keywordMap = {};
+            clips.forEach(clip => {
+                const keys = (clip.keywords && clip.keywords.length > 0) ? clip.keywords : ['General'];
+                keys.forEach(k => {
+                    if (!keywordMap[k]) keywordMap[k] = [];
+                    keywordMap[k].push(clip);
+                });
+            });
+
+            // Sort clips inside each keyword group: pinned first, then newest
+            Object.keys(keywordMap).forEach(k => {
+                keywordMap[k].sort((a, b) => {
+                    if (!!a.isPinned !== !!b.isPinned) return a.isPinned ? -1 : 1;
+                    return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+                });
+            });
+
+            // Sort keyword groups according to tagSortMode
+            let sortedEntries = Object.entries(keywordMap);
+            if (tagSortMode === 'mostFrequent') {
+                sortedEntries.sort((a, b) => {
+                    if (b[1].length !== a[1].length) return b[1].length - a[1].length;
+                    return a[0].localeCompare(b[0]);
+                });
+            } else if (tagSortMode === 'hottest') {
+                sortedEntries.sort((a, b) => {
+                    const tA = Math.max(...a[1].map(c => new Date(c.timestamp || 0).getTime()));
+                    const tB = Math.max(...b[1].map(c => new Date(c.timestamp || 0).getTime()));
+                    if (tB !== tA) return tB - tA;
+                    return b[1].length - a[1].length;
+                });
+            } else { // 'all'
+                sortedEntries.sort((a, b) => a[0].localeCompare(b[0]));
+            }
+
+            // Apply tagDisplayLimit
+            const visibleEntries = (tagDisplayLimit > 0) ? sortedEntries.slice(0, tagDisplayLimit) : sortedEntries;
+            const icon = tagSortMode === 'hottest' ? '🔥' : (tagSortMode === 'mostFrequent' ? '📊' : '🏷️');
+
+            visibleEntries.forEach(([keyword, groupClips]) => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'tag-group-card open';
+
+                const header = document.createElement('div');
+                header.className = 'tag-group-header';
+                header.onclick = () => groupCard.classList.toggle('open');
+                header.innerHTML = `
+                    <div class="tag-title-wrap">
+                        <span class="tag-icon-badge">${icon}</span>
+                        <span class="tag-name">${escapeHtml(keyword)}</span>
+                        <span class="tag-count-badge">${groupClips.length} clips</span>
+                    </div>
+                    <span class="tag-toggle-chevron">▼</span>
+                `;
+
+                const body = document.createElement('div');
+                body.className = 'tag-group-body';
+                groupClips.forEach((clip, clipIdx) => {
+                    body.appendChild(createClipCard(clip, clipIdx + 1));
+                });
+
+                groupCard.appendChild(header);
+                groupCard.appendChild(body);
+                container.appendChild(groupCard);
+            });
+        }
+
+        function createClipCard(clip, index) {
+            const card = document.createElement('div');
+            card.className = 'clip-card' + (clip.isPinned ? ' pinned' : '');
+            
+            const appName = clip.appName || 'Unknown App';
+            const dateStr = clip.timestamp ? new Date(clip.timestamp).toLocaleString() : 'Recent';
+            const charLen = clip.text ? clip.text.length : 0;
+            
+            const kwBadges = (clip.keywords && clip.keywords.length > 0)
+                ? clip.keywords.map(k => `<span class="keyword-badge" onclick="filterByKeyword('${escapeHtml(k)}')">🏷️ ${escapeHtml(k)}</span>`).join(' ')
+                : '';
+
+            card.innerHTML = `
+                <div class="clip-header">
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span class="app-badge">${escapeHtml(appName)}</span>
+                        <span>#${index}</span>
+                        <span>${dateStr}</span>
+                        ${clip.isPinned ? '<span class="pinned-tag">📌 Pinned</span>' : ''}
+                        ${kwBadges}
+                    </div>
+                    <span style="font-family:'JetBrains Mono',monospace; font-size:11px;">${charLen} chars</span>
+                </div>
+                <div class="clip-content">${escapeHtml(clip.text)}</div>
+                <div class="clip-actions">
+                    <button class="btn btn-sm ${clip.isPinned ? 'btn-pinned' : ''}" onclick="togglePinClip('${clip.id}')">
+                        ${clip.isPinned ? '📌 Unpin' : '📌 Pin'}
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="copyClip('${clip.id}')">📋 Copy</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteClip('${clip.id}')">🗑️ Delete</button>
+                </div>
+            `;
+            return card;
+        }
+
+        // ── Single Clip Actions ──
+        window.togglePinClip = async function(id) {
+            const clip = allClips.find(c => c.id === id);
+            if (!clip) return;
+            clip.isPinned = !clip.isPinned;
+            saveLocalCache();
+            renderCurrentView();
+            showToast(clip.isPinned ? "Pinned clip 📌" : "Unpinned clip");
+
+            try {
+                await fetch('/api/clipboard-sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'toggle_pin',
+                        id: clip.id,
+                        email: currentEmail,
+                        token: currentShareword,
+                        hash: currentHash
+                    })
+                });
+            } catch (e) {
+                console.warn("Background pin sync error (cached locally):", e);
+            }
+        };
+
+        window.deleteClip = async function(id) {
+            const idx = allClips.findIndex(c => c.id === id);
+            if (idx === -1) return;
+            const [removed] = allClips.splice(idx, 1);
+            document.getElementById('statTotalClips').innerText = allClips.length;
+            saveLocalCache();
+            renderCurrentView();
+            showToast("Clip deleted 🗑️");
+
+            try {
+                await fetch('/api/clipboard-sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        id: removed.id,
+                        email: currentEmail,
+                        token: currentShareword,
+                        hash: currentHash
+                    })
+                });
+            } catch (e) {
+                console.warn("Background delete sync error (cached locally):", e);
+            }
+        };
+
+        // ── All History Operations (Menubar Parity) ──
+        window.copyAllHistory = function() {
+            const filtered = getFilteredClips();
+            if (!filtered || filtered.length === 0) {
+                showToast("No clips to copy!");
+                return;
+            }
+            let text = "# BlueClip Export — " + new Date().toLocaleString() + "\n\n";
+            filtered.forEach((clip, idx) => {
+                text += "--------------------------------------------------\n";
+                text += `[${idx + 1}] Date: ${clip.timestamp ? new Date(clip.timestamp).toLocaleString() : 'Recent'} | App: ${clip.appName || 'Unknown'} | Chars: ${(clip.text || '').length}\n`;
+                text += "--------------------------------------------------\n";
+                text += (clip.text || '') + "\n\n";
+            });
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`Copied ${filtered.length} clips to clipboard!`);
+            });
+        };
+
+        window.exportJSON = function() {
+            const filtered = getFilteredClips();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(filtered, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `BlueClip_Export_${new Date().toISOString().slice(0,10)}.json`);
+            dlAnchor.click();
+            showToast("Exported JSON!");
+        };
+
+        window.exportText = function() {
+            const filtered = getFilteredClips();
+            if (!filtered || filtered.length === 0) {
+                showToast("No clips to export!");
+                return;
+            }
+            let text = "# BlueClip History Export — " + new Date().toLocaleString() + "\n\n";
+            filtered.forEach((clip, idx) => {
+                text += "--------------------------------------------------\n";
+                text += `[${idx + 1}] Date: ${clip.timestamp ? new Date(clip.timestamp).toLocaleString() : 'Recent'} | App: ${clip.appName || 'Unknown'} | Chars: ${(clip.text || '').length}\n`;
+                if (clip.keywords && clip.keywords.length > 0) {
+                    text += `Keywords: ${clip.keywords.join(', ')}\n`;
+                }
+                text += "--------------------------------------------------\n";
+                text += (clip.text || '') + "\n\n";
+            });
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const dlAnchor = document.createElement('a');
+            dlAnchor.href = url;
+            dlAnchor.download = `BlueClip_History_${new Date().toISOString().slice(0, 10)}.txt`;
+            dlAnchor.click();
+            URL.revokeObjectURL(url);
+            showToast(`Exported ${filtered.length} clips as text!`);
+        };
+
+        window.openDeleteAllModal = function() {
+            document.getElementById('deleteAllModal').classList.add('active');
+        };
+
+        window.closeDeleteAllModal = function() {
+            document.getElementById('deleteAllModal').classList.remove('active');
+        };
+
+        window.confirmDeleteAll = async function() {
+            closeDeleteAllModal();
+            allClips = [];
+            document.getElementById('statTotalClips').innerText = "0";
+            saveLocalCache();
+            renderCurrentView();
+            showToast("All clipboard history deleted 🗑️");
+
+            try {
+                await fetch('/api/clipboard-sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete_all',
+                        email: currentEmail,
+                        token: currentShareword,
+                        hash: currentHash
+                    })
+                });
+            } catch (e) {
+                console.warn("Background clear sync error (cached locally):", e);
+            }
+        };
+
+        // ── Quick Add / Paste ──
+        window.toggleQuickAdd = function() {
+            const card = document.getElementById('quickAddCard');
+            const isHidden = card.style.display === 'none';
+            card.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) {
+                document.getElementById('quickAddInput').focus();
+            }
+        };
+
+        window.submitQuickAdd = async function() {
+            const input = document.getElementById('quickAddInput');
+            const text = (input.value || '').trim();
+            if (!text) return;
+
+            const newClip = {
+                id: 'web-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+                text: text,
+                timestamp: new Date().toISOString(),
+                appName: 'Web Hub',
+                appBundleId: 'com.blueclip.web',
+                isPinned: false,
+                keywords: extractKeywords(text)
+            };
+
+            allClips.unshift(newClip);
+            input.value = '';
+            document.getElementById('quickAddCard').style.display = 'none';
+            document.getElementById('statTotalClips').innerText = allClips.length;
+            saveLocalCache();
+            renderCurrentView();
+            showToast("Added new clipping! 📌");
+
+            try {
+                await fetch('/api/clipboard-sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'add',
+                        text: text,
+                        email: currentEmail,
+                        token: currentShareword,
+                        hash: currentHash
+                    })
+                });
+            } catch (e) {
+                console.warn("Background add sync error (cached locally):", e);
+            }
+        };
+
+        function extractKeywords(text) {
+            if (!text) return ["General"];
+            const words = text.replace(/[^a-zA-Z0-9\s]/g, ' ')
+                .split(/\s+/)
+                .filter(w => w.length >= 4)
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+            const unique = [...new Set(words)].slice(0, 5);
+            return unique.length > 0 ? unique : ["General"];
+        }
+
+        window.filterByKeyword = function(keyword) {
+            const input = document.getElementById('searchInput');
+            input.value = keyword;
+            searchQuery = keyword;
+            renderCurrentView();
+        };
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            renderCurrentView();
+        });
+
+        window.copyClip = function(id) {
+            const clip = allClips.find(c => c.id === id);
+            if (!clip) return;
+            navigator.clipboard.writeText(clip.text).then(() => {
+                showToast("Clip copied to clipboard!");
+            });
+        };
+
+        window.copyText = function(text, successMsg) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(successMsg || "Copied!");
+            });
+        };
+
+        window.copyShareDetails = function() {
+            const tokenDesc = currentHash ? `Token Hash: ${currentHash}` : `Shareword: ${currentShareword}`;
+            const details = `BlueClip Pairing Details:\nEmail: ${currentEmail}\n${tokenDesc}\nSync Hub: ${window.location.origin}`;
+            copyText(details, "Pairing details copied to clipboard!");
+        };
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Initialize: Load from local cache immediately, then sync with remote hub
+        loadFromLocalCache();
+        loadHistory();
+    </script>
+</body>
+</html>

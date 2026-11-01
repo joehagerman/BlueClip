@@ -1,0 +1,43 @@
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Swift Package Manager & Xcode Build Products
+.build/
+build/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.zip
+
+# BlueClip Runtime Clipboard Data (Personal History & PII Protection)
+server/clipboard_history*.json
+!server/clipboard_history.sample.json
+clipboard_history*.json
+*.sqlite
+*.sqlite3
+*.db
+
+# Credentials, Keys & Secrets
+*.pem
+*.key
+*.cer
+*.crt
+*.p12
+*.pfx
+.env
+.env.*
+
+# Logs & Temporary Files
+*.log
+*.tmp
+*.swp
+*~
