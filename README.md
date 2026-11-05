@@ -45,6 +45,11 @@ Running quietly in your macOS status bar, BlueClip combines ultra-low memory ove
 
 All official release builds, signatures, and changelogs are available on the [GitHub Releases Page](https://github.com/joehagerman/BlueClip/releases).
 
+> **Note on macOS Gatekeeper**: Because BlueClip is distributed directly via GitHub, macOS may show a verification notice upon first launch. To open:
+> 1. In the alert, click **Done** (do not click Move to Trash).
+> 2. Open **System Settings ➔ Privacy & Security**, scroll down to **Security**, and click **Open Anyway**.
+> 3. Alternatively, in Terminal run: `xattr -cr /Applications/BlueClip.app`.
+
 ---
 
 ## Feature Comparison: CopyClip vs. BlueClip
